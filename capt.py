@@ -1,5 +1,9 @@
 import cv2  # OpenCV
+from keras.models import load_model
+from numpy import argmax
 
+
+model = load_model('detection_model')
 # opencv object that will detect faces for us
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades
                                      + 'haarcascade_frontalface_default.xml')
@@ -36,6 +40,11 @@ while True:
                       (x + w, y + h),  # end_point
                       (255, 0, 0),  # color in BGR
                       2)  # thickness in px
+        for_detection = frame[y:y + h, x:w + x]
+    prediction = model.predict(for_detection)
+    label_predicted = argmax(prediction)
+    name = str(label_predicted)
+    cv2.putText(fram, name, (x+5, y+5))
 
     # Display the resulting frame
     cv2.imshow("Face detector - to quit press ESC", frame)
